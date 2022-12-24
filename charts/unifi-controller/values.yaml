@@ -1,0 +1,59 @@
+image:
+  repo: linuxserver/unifi-controller
+  tag: 7.3.76
+  imagePullPolicy: IfNotPresent
+
+deployment:
+  replica: 1
+  env:
+    - name: PUID
+      value: "1000"
+    - name: PGID
+      value: "1000"
+    - name: TZ
+      value: "Asia/Tokyo"
+  resource:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  mountPath: /config
+
+ingress:
+  hostname:
+    - "unifi.example.com"
+  # ingress target port
+  port: 443
+
+service:
+  type: ClusterIP
+  ports:
+    http:
+    - port: 443
+      targetPort: 8443
+    - port: 80
+      targetPort: 8080
+    tcp: 
+    - port: 8080
+      targetPort: 8080
+    - port: 8443
+      targetPort: 8443
+    - port: 8843
+      targetPort: 8843
+    - port: 8880
+      targetPort: 8880
+    udp: 
+    - port: 3478
+      targetPort: 3478
+    - port: 10001
+      targetPort: 10001
+
+pvc:
+  storageClassName: nfs-client
+
+nfs:
+  host: 192.168.1.1
+  path: /srv/nfs/unifi
+  storage: 3Gi 

@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.name }}
+  labels:
+    app: {{ .Chart.name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.name }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.name }}
+        version: {{ .Chart.version }}
+    spec:
+      containers:
+      - name: {{ .Chart.name }}
+        image: {{ .Values.image.repo }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ default "IfNotPresent" .Values.image.imagePullPolicy }}
+        env:
+          {{- range $.Values.deployment.env }}
+          - {{ . }}
+          {{- end }}
+        resources:
+          limits:
+            cpu: {{ .Values.deployment.resources.limits.cpu }}
+            memory: {{ .Values.deployment.resources.limits.memory }}
+          requests:
+            cpu: {{ .Values.deployment.resources.requests.cpu }}
+            memory: {{ .Values.deployment.resources.requests.memory }}
+        ports:
+          {{- range $i, $v :=  $.Values.service.ports.tcp }}
+          - name: tcp-{{ $v.port }}
+            containerPort: {{ $v.targetPort }}
+            protocol: TCP
+          {{- end }}
+          {{- range $i, $v :=  $.Values.service.ports.udp }}
+          - name: udp-{{ $v.port }}
+            containerPort: {{ $v.targetPort }}
+            protocol: UDP
+          {{- end }}
+        volumeMounts:
+        - name: {{ .Chart.name }}
+          mountPath: {{ .Values.deployment.mountPath }}
+      volumes:
+      - name: {{ .Chart.name }}
+        persistentVolumeClaim:
+          claimName: {{ .Chart.name }}

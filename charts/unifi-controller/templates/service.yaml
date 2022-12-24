@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.name }}
+  labels:
+    app: {{ .Chart.name }}
+spec:
+  ports:
+    {{- range $i, $v :=  $.Values.service.ports.http }}
+    - name: http-{{ $v.port }}
+      port: {{ $v.port }}
+      protocol: TCP
+      targetPort: {{ $v.targetPort }}
+    {{- end }}
+    {{- range $i, $v :=  $.Values.service.ports.tcp }}
+    - name: tcp-{{ $v.port }}
+      port: {{ $v.port }}
+      protocol: TCP
+      targetPort: {{ $v.targetPort }}
+    {{- end }}
+    {{- range $i, $v :=  $.Values.service.ports.udp }}
+    - name: udp-{{ $v.port }}
+      port: {{ $v.port }}
+      protocol: UDP
+      targetPort: {{ $v.targetPort }}
+    {{- end }}
+  selector:
+    app: {{ .Chart.name }}
