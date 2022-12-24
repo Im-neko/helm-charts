@@ -2,7 +2,7 @@
 
 deploy Unifi Network Controller to on-premise k8s cluster 
 
-## requirements
+## Requirements
 
 - ingress-nginx
 - nfs-subdir-external-provisioner 
@@ -20,6 +20,9 @@ And make sure to allow these ports access
 | UDP | 3478 | STUN | 
 | UDP | 10001 | find L2 device | 
 
-## install
 
-`helm install [RELEASE_NAME] im-neko/unifi-controller`
+## Install
+```
+git clone https://github.com/Im-neko/helm-charts.git
+helm install [RELEASE_NAME] helm-charts/unifi-controller
+```
