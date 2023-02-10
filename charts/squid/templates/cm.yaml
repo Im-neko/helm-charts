@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: squid-config
+data:
+  squid.conf: |
+    auth_param basic program /usr/lib/squid3/basic_ncsa_auth /etc/squid3/passwords
+    acl authenticated proxy_auth REQUIRED
+    http_access allow authenticated
+    http_port 3128
+  passwords: |
+    neko:$apr1$Ev1wvaWR$UPshePkqojOo2Tx8kVtRH
